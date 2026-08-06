@@ -23,3 +23,29 @@ python3 examples/alarm_triage_sim.py
 - Paperclip boards / hiring / freeze budgets  
 - Swarm mission scheduling (see aspen-swarm-manager)  
 - Edge RRM lifecycle (see aspen-edge-rrm)
+
+## Graphs
+| Name | Purpose |
+|------|---------|
+| `alarm_triage` | Classify plant alarm → propose_act |
+| `doc_assist` | Tiny SOP retrieve → notify_operator proposal |
+
+## Job bus
+Publish to `aspen.worker.langgraph.job`:
+```json
+{"id": "j1", "graph": "alarm_triage", "alarm": {"code": "E1", "severity": "critical", "message": "estop"}}
+```
+Results: `aspen.worker.langgraph.result` + `aspen.edge.<node>.propose_act`.
+
+## Optional LangGraph
+```bash
+pip install 'aspen-langgraph-worker[langgraph]'
+export ASPEN_USE_LANGGRAPH=1
+```
+
+## Optional NATS
+```bash
+pip install nats-py
+export ASPEN_NATS_URL=nats://127.0.0.1:4222
+python -m aspen_lgw.nats_consumer
+```

@@ -1,15 +1,18 @@
 def main():
-    import json, os
-    from aspen_lgw.bus import LabBus
-    from aspen_lgw.propose import emit_propose_act
-    from aspen_lgw.graphs.alarm_triage import build_alarm_triage_graph
+    import json, os, argparse
     os.environ.setdefault("ASPEN_SIM", "1")
+    p = argparse.ArgumentParser()
+    p.add_argument("--graph", default="alarm_triage")
+    p.add_argument("--langgraph", action="store_true")
+    args = p.parse_args()
+    from aspen_lgw import LabBus, LangGraphWorker
     bus = LabBus()
-    g = build_alarm_triage_graph()
-    state = g.run({"alarm": {"code": "T-01", "severity": "high", "message": "overheat zone 3"}})
-    prop = state["proposal"]
-    env = emit_propose_act(bus, "edge-sim-1", prop, job_id="cli-demo")
-    print(json.dumps({"trace": state["_trace"], "propose": env["data"]}, indent=2))
+    w = LangGraphWorker(bus=bus, use_langgraph=args.langgraph)
+    if args.graph == "doc_assist":
+        job = {"id": "cli", "graph": "doc_assist", "query": "estop"}
+    else:
+        job = {"id": "cli", "graph": "alarm_triage", "alarm": {"code": "T-01", "severity": "high", "message": "overheat zone 3"}}
+    print(json.dumps(w.handle_job(job), indent=2, default=str))
 
 if __name__ == "__main__":
     main()
