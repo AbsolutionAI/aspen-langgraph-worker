@@ -1,6 +1,6 @@
 [project]
 name = "aspen-langgraph-worker"
-version = "0.1.0"
+version = "0.2.0"
 description = "AspenOS LangGraph-style cognitive worker (propose_act only)"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
@@ -8,9 +8,13 @@ dependencies = []
 
 [project.optional-dependencies]
 langgraph = ["langgraph>=0.2", "langchain-core>=0.3"]
+nats = ["nats-py>=2.6"]
+pgvector = ["psycopg[binary]>=3.1"]
+all = ["langgraph>=0.2", "langchain-core>=0.3", "nats-py>=2.6", "psycopg[binary]>=3.1"]
 
 [project.scripts]
 aspen-lgw = "aspen_lgw.cli:main"
+aspen-lgw-invoke = "aspen_lgw.invoke:main"
 
 [build-system]
 requires = ["setuptools>=68"]

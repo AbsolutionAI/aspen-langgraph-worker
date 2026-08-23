@@ -1,28 +1,20 @@
 """Tiny doc-assist graph: retrieve snippet → propose operator note (no act hardware)."""
 from __future__ import annotations
+
 from aspen_lgw.graph import StdlibGraph, GraphState
 from aspen_lgw.propose import ProposeAct
-
-# Lab corpus — replace with pgvector later
-CORPUS = [
-    {"id": "sop-estop", "text": "E-stop: freeze motion, notify lead, dual-auth before resume."},
-    {"id": "sop-thermal", "text": "Overtemp: reduce duty cycle 50%, check coolant, log sensor id."},
-    {"id": "sop-handoff", "text": "Shift handoff: write what changed, open alarms, safe defaults."},
-]
+from aspen_lgw.retrieval import Retriever, default_retriever
 
 
-def build_doc_assist_graph() -> StdlibGraph:
+def build_doc_assist_graph(retriever: Retriever | None = None) -> StdlibGraph:
+    ret = retriever or default_retriever()
     g = StdlibGraph(entry="retrieve")
 
     def retrieve(s: GraphState) -> GraphState:
-        q = (s.get("query") or "").lower()
-        hits = []
-        for doc in CORPUS:
-            score = sum(1 for w in q.split() if w in doc["text"].lower())
-            if score:
-                hits.append((score, doc))
-        hits.sort(key=lambda x: -x[0])
-        s["hits"] = [h[1] for h in hits[:3]]
+        q = s.get("query") or ""
+        hits = ret.search(str(q), k=3)
+        s["hits"] = [{"id": h.id, "text": h.text, "score": h.score} for h in hits]
+        s["_retriever"] = type(ret).__name__
         return s
 
     def propose(s: GraphState) -> GraphState:
