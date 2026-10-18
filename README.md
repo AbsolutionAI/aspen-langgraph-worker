@@ -52,7 +52,7 @@ export ASPEN_NATS_URL=nats://127.0.0.1:4222
 
 ## NATS lab E2E
 ```bash
-make nats-e2e   # docker nats:2-alpine + request/reply; skips if docker/nats-py missing
+make nats-e2e   # local nats-server (or docker nats:2-alpine) -js: request/reply + JetStream result capture; skips if no broker/nats-py (NATS_E2E_REQUIRED=1 makes skips fail; CI job `nats-e2e`)
 ```
 
 ## Hermes / Paperclip invoke
