@@ -8,7 +8,7 @@ ADR-0005 · epic docs/plans/2026-08-06-langgraph-worker-epic.md · Master Spec v
 | BEL-204 | alarm-triage spike | Done |
 | BEL-205 | Optional langgraph extra | Done |
 | BEL-206 | Job bus + doc_assist | Done |
-| BEL-207 | NATS lab consumer E2E | Done (`make nats-e2e`) |
+| BEL-207 | NATS lab consumer E2E | `make nats-e2e`; CI job `nats-e2e` (live nats-server -js, skips fail) |
 | BEL-208 | pgvector doc_assist | Done (optional DSN + memory cascade) |
 | BEL-209 | Hermes/Paperclip invoke hook | Done (`python -m aspen_lgw.invoke`) |
 | BEL-210 | aspen-grove compose note | Done (`compose/langgraph-lab.yml`) |
